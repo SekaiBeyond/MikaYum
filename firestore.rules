@@ -3,13 +3,18 @@ rules_version = '2';
 // MikaYum Firestore security rules.
 // Strategy:
 //   - menuItems / categories / config: public read so anonymous customers can browse.
-//   - tables: public read (limited fields); writes via Cloud Functions / admin only.
-//   - orders: created via the placeOrder callable (admin SDK bypasses these rules);
-//     direct client creates are denied. Reads scoped per role. Status updates via
-//     the updateOrderStatus callable.
-//   - users: admin-only.
+//   - tables: public read (so a customer can land on /t/:id and see status);
+//     direct writes restricted to admin. Cloud Functions (openTableSession,
+//     markTablePaid, placeOrder) update via the Admin SDK and bypass these rules.
+//   - sessions: read by staff/kitchen/admin OR by anonymous customers whose uid
+//     is in customerUids. All writes through Cloud Functions only.
+//   - orders: created via placeOrder; status changes via updateOrderStatus.
+//     Direct client writes denied. Reads: customer sees own orders only;
+//     staff/kitchen/admin see all (needed for kitchen board + staff table view).
+//   - users: admin-only writes; users can read their own row (for sign-out UX).
+//   - counters / reports: callable / admin-only.
 //
-// Tighten further during M5 hardening.
+// Audit pass scheduled for M5. If you add new collections, deny by default.
 
 service cloud.firestore {
   match /databases/{database}/documents {
