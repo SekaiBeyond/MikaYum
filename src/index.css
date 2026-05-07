@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        /* Pastel pink/cream baseline — finalize at M4 */
+        --background: 30 50% 98%;
+        --foreground: 340 30% 18%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 340 30% 18%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 340 30% 18%;
+
+        --primary: 338 75% 65%;
+        --primary-foreground: 0 0% 100%;
+
+        --secondary: 30 60% 94%;
+        --secondary-foreground: 340 30% 22%;
+
+        --muted: 30 30% 95%;
+        --muted-foreground: 340 10% 45%;
+
+        --accent: 280 60% 92%;
+        --accent-foreground: 280 40% 25%;
+
+        --destructive: 0 75% 55%;
+        --destructive-foreground: 0 0% 100%;
+
+        --border: 340 20% 90%;
+        --input: 340 20% 90%;
+        --ring: 338 75% 65%;
+
+        --radius: 0.75rem;
+    }
+
+    .dark {
+        --background: 340 25% 8%;
+        --foreground: 30 30% 95%;
+
+        --card: 340 25% 10%;
+        --card-foreground: 30 30% 95%;
+
+        --popover: 340 25% 10%;
+        --popover-foreground: 30 30% 95%;
+
+        --primary: 338 75% 65%;
+        --primary-foreground: 0 0% 100%;
+
+        --secondary: 340 20% 16%;
+        --secondary-foreground: 30 30% 95%;
+
+        --muted: 340 20% 14%;
+        --muted-foreground: 30 15% 65%;
+
+        --accent: 280 30% 22%;
+        --accent-foreground: 280 30% 90%;
+
+        --destructive: 0 65% 50%;
+        --destructive-foreground: 0 0% 100%;
+
+        --border: 340 20% 18%;
+        --input: 340 20% 18%;
+        --ring: 338 75% 65%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground antialiased;
+        font-feature-settings: "ss01", "cv11";
+    }
+
+    html {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
