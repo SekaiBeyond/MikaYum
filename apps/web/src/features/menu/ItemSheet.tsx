@@ -39,6 +39,7 @@ interface QtyStepperProps {
 }
 
 function QtyStepper({ value, onChange, min = 0, max = 50 }: QtyStepperProps) {
+  const { t } = useTranslation();
   return (
     <div className="inline-flex items-center gap-2">
       <Button
@@ -47,12 +48,15 @@ function QtyStepper({ value, onChange, min = 0, max = 50 }: QtyStepperProps) {
         variant="outline"
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}
-        aria-label="Decrease quantity"
+        aria-label={t("common.decrease")}
         className="h-8 w-8"
       >
-        <Minus className="h-3.5 w-3.5" />
+        <Minus className="h-3.5 w-3.5" aria-hidden="true" />
       </Button>
-      <span className="w-6 text-center text-sm font-semibold tabular-nums">
+      <span
+        className="w-6 text-center text-sm font-semibold tabular-nums"
+        aria-live="polite"
+      >
         {value}
       </span>
       <Button
@@ -61,10 +65,10 @@ function QtyStepper({ value, onChange, min = 0, max = 50 }: QtyStepperProps) {
         variant="outline"
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={value >= max}
-        aria-label="Increase quantity"
+        aria-label={t("common.increase")}
         className="h-8 w-8"
       >
-        <Plus className="h-3.5 w-3.5" />
+        <Plus className="h-3.5 w-3.5" aria-hidden="true" />
       </Button>
     </div>
   );

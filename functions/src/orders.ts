@@ -1,4 +1,5 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import { getFirestore, FieldValue, Timestamp } from "firebase-admin/firestore";
 import { requireAuthed, requireRole } from "./lib/auth";
 import { PlaceOrderRequestSchema, OrderStatusSchema } from "./schemas";
@@ -51,14 +52,16 @@ interface OrderLineSnapshot {
   lineTotal: number;
 }
 
-/**
- * Counter key — used to allocate human-friendly daily order numbers.
- * For a one-day event, you can hard-code a single key (e.g. "event") in
- * config/event and read it here. For now we partition by UTC date so each
- * dev day starts fresh.
- */
-function counterKey(now: Date = new Date()): string {
-  return now.toISOString().slice(0, 10); // YYYY-MM-DD
+// Counter key — drives the human-friendly daily order numbers. The event
+// runner sets `config/event.counterKey` (e.g. "2026-06-15" or just "event") to
+// keep numbers stable across the whole event. If unset, fall back to today's
+// UTC date so dev sessions start fresh.
+async function resolveCounterKey(
+  db: FirebaseFirestore.Firestore,
+): Promise<string> {
+  const cfg = await db.collection("config").doc("event").get();
+  const key = cfg.data()?.counterKey as string | undefined;
+  return key ?? new Date().toISOString().slice(0, 10);
 }
 
 export const placeOrder = onCall({ region: REGION }, async (req) => {
@@ -74,7 +77,9 @@ export const placeOrder = onCall({ region: REGION }, async (req) => {
 
   const db = getFirestore();
   const tableRef = db.collection("tables").doc(tableId);
-  const counterRef = db.collection("counters").doc(counterKey());
+  const counterRef = db
+    .collection("counters")
+    .doc(await resolveCounterKey(db));
 
   // Deduplicate menu item ids while preserving line order.
   const uniqueItemIds = Array.from(new Set(lines.map((l) => l.itemId)));
@@ -326,3 +331,54 @@ export const updateOrderStatus = onCall({ region: REGION }, async (req) => {
     return { ok: true };
   });
 });
+
+// Defense-in-depth: whenever an order doc is written, recompute session.total
+// and (when the table still points at this session) table.unpaidTotal from
+// the authoritative orders set. placeOrder/markTablePaid keep these counters
+// in step today; this trigger means a future code change that drifts the
+// math gets self-healed within a write or two.
+export const onOrderWrite = onDocumentWritten(
+  { region: REGION, document: "orders/{orderId}" },
+  async (event) => {
+    const before = event.data?.before?.data() as
+      | { sessionId?: string; tableId?: string }
+      | undefined;
+    const after = event.data?.after?.data() as
+      | { sessionId?: string; tableId?: string }
+      | undefined;
+    const sessionId = after?.sessionId ?? before?.sessionId;
+    const tableId = after?.tableId ?? before?.tableId;
+    if (!sessionId) return;
+
+    const db = getFirestore();
+    const ordersSnap = await db
+      .collection("orders")
+      .where("sessionId", "==", sessionId)
+      .get();
+    const total = ordersSnap.docs.reduce(
+      (sum, d) => sum + ((d.data().subtotal as number | undefined) ?? 0),
+      0,
+    );
+
+    const sessionRef = db.collection("sessions").doc(sessionId);
+    const sessionSnap = await sessionRef.get();
+    if (sessionSnap.exists) {
+      const current = sessionSnap.data()?.total as number | undefined;
+      if (current !== total) {
+        await sessionRef.update({ total });
+      }
+    }
+
+    if (tableId) {
+      const tableRef = db.collection("tables").doc(tableId);
+      const tableSnap = await tableRef.get();
+      const tableData = tableSnap.data();
+      if (tableData && tableData.currentSessionId === sessionId) {
+        const currentUnpaid = tableData.unpaidTotal as number | undefined;
+        if (currentUnpaid !== total) {
+          await tableRef.update({ unpaidTotal: total });
+        }
+      }
+    }
+  },
+);

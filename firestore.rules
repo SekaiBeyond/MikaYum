@@ -53,7 +53,11 @@ service cloud.firestore {
 
     // -------------------- tables --------------------
     match /tables/{tableId} {
-      allow read: if true;
+      // Customers always reach a table by ID (the QR-scan deep link), so
+      // `get` is public, but `list` is staff-only — no enumeration of all
+      // tables and their unpaid totals from a customer device.
+      allow get: if true;
+      allow list: if isStaff();
       // Direct writes blocked — Cloud Functions update via admin SDK.
       allow write: if isAdmin();
     }
@@ -67,10 +71,12 @@ service cloud.firestore {
 
     // -------------------- orders --------------------
     match /orders/{orderId} {
-      // Customer can only read their own orders.
-      allow get: if isStaff()
-                 || (isSignedIn() && resource.data.placedByUid == request.auth.uid);
-      allow list: if isStaff();
+      // Customer can read (get OR list) only orders they placed. The list
+      // query in useCustomerOrders filters where('placedByUid','==',uid),
+      // which keeps every returned doc inside the rule, so list succeeds.
+      allow get, list: if isStaff()
+                       || (isSignedIn()
+                           && resource.data.placedByUid == request.auth.uid);
       // Direct create/update/delete blocked — callable functions handle these.
       allow write: if false;
     }

@@ -21,7 +21,11 @@
     "edit": "Edit",
     "add": "Add",
     "close": "Close",
-    "language": "Language"
+    "language": "Language",
+    "offline": "You're offline. Changes will sync when reconnected.",
+    "increase": "Increase",
+    "decrease": "Decrease",
+    "remove": "Remove"
   },
   "customer": {
     "welcome": "Welcome to {{cafe}}",
@@ -152,7 +156,9 @@
   },
   "errors": {
     "notFound": "Page not found.",
-    "goHome": "Go home"
+    "goHome": "Go home",
+    "routeError": "Something went wrong.",
+    "reload": "Reload"
   },
   "status": {
     "pending": "Pending",

@@ -136,6 +136,7 @@ function CartLineRow({
   onDecrement,
   onRemove,
 }: RowProps) {
+  const { t } = useTranslation();
   const variantSummary = item
     ? Object.entries(line.variantChoices)
         .map(([groupId, optionId]) => {
@@ -189,11 +190,14 @@ function CartLineRow({
               size="sm"
               className="h-7 w-7 p-0"
               onClick={onDecrement}
-              aria-label="Decrease quantity"
+              aria-label={t("common.decrease")}
             >
               −
             </Button>
-            <span className="w-6 text-center text-sm tabular-nums">
+            <span
+              className="w-6 text-center text-sm tabular-nums"
+              aria-live="polite"
+            >
               {line.qty}
             </span>
             <Button
@@ -201,7 +205,7 @@ function CartLineRow({
               size="sm"
               className="h-7 w-7 p-0"
               onClick={onIncrement}
-              aria-label="Increase quantity"
+              aria-label={t("common.increase")}
             >
               +
             </Button>
@@ -210,9 +214,9 @@ function CartLineRow({
               size="sm"
               className="ml-2 h-7 px-2 text-muted-foreground"
               onClick={onRemove}
-              aria-label="Remove"
+              aria-label={t("common.remove")}
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
             </Button>
           </div>
         </div>

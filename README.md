@@ -87,15 +87,3 @@ This builds the web app and functions, then runs `firebase deploy` to Hosting + 
 
 - **Customer** — anonymous Firebase auth, auto on first QR scan.
 - **Staff / Kitchen / Admin** — email/password. Roles set via Firebase custom claims by an admin (see `functions/src/admin.ts → setStaffRole`).
-
-## Status
-
-🚧 In active development.
-
-- **M1** ✅ Scaffold & infra (workspace, web app, functions, Firebase config, auth, routing, i18n)
-- **M2** ✅ Menu & customer ordering (data model, customer browse + cart + place order, live status, basic admin menu CRUD)
-- **M3** ⏳ Staff & kitchen (next)
-- **M4** ⏳ Admin & branding
-- **M5** ⏳ Hardening & event prep
-
-See the plan file for milestone scope.

@@ -1,23 +1,66 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { lazy, type ReactNode } from "react";
+import {
+  createBrowserRouter,
+  Navigate,
+  type RouteObject,
+} from "react-router-dom";
 import { RoleGuard } from "@/routes/RoleGuard";
 import { LandingPage } from "@/routes/LandingPage";
 import { TableLanding } from "@/routes/customer/TableLanding";
 import { CustomerMenu } from "@/routes/customer/CustomerMenu";
 import { CustomerCart } from "@/routes/customer/CustomerCart";
 import { CustomerOrders } from "@/routes/customer/CustomerOrders";
-import { StaffLogin } from "@/routes/staff/StaffLogin";
-import { StaffTables } from "@/routes/staff/StaffTables";
-import { StaffTableDetail } from "@/routes/staff/StaffTableDetail";
-import { KitchenBoard } from "@/routes/kitchen/KitchenBoard";
-import { AdminMenu } from "@/routes/admin/AdminMenu";
-import { AdminCategories } from "@/routes/admin/AdminCategories";
-import { AdminTables } from "@/routes/admin/AdminTables";
-import { AdminTablesPrint } from "@/routes/admin/AdminTablesPrint";
-import { AdminStaff } from "@/routes/admin/AdminStaff";
-import { AdminReports } from "@/routes/admin/AdminReports";
 import { NotFoundPage } from "@/routes/NotFoundPage";
+import { LazyRoute } from "@/routes/routeHelpers";
+import { RouteError } from "@/components/RouteError";
 
-export const router = createBrowserRouter([
+const errorElement = <RouteError />;
+
+// Lazy chunks: staff / kitchen / admin never load on /t/:tableId, the QR-scan hot path.
+const StaffLogin = lazy(() =>
+  import("@/routes/staff/StaffLogin").then((m) => ({ default: m.StaffLogin })),
+);
+const StaffTables = lazy(() =>
+  import("@/routes/staff/StaffTables").then((m) => ({ default: m.StaffTables })),
+);
+const StaffTableDetail = lazy(() =>
+  import("@/routes/staff/StaffTableDetail").then((m) => ({
+    default: m.StaffTableDetail,
+  })),
+);
+const KitchenBoard = lazy(() =>
+  import("@/routes/kitchen/KitchenBoard").then((m) => ({
+    default: m.KitchenBoard,
+  })),
+);
+const AdminMenu = lazy(() =>
+  import("@/routes/admin/AdminMenu").then((m) => ({ default: m.AdminMenu })),
+);
+const AdminCategories = lazy(() =>
+  import("@/routes/admin/AdminCategories").then((m) => ({
+    default: m.AdminCategories,
+  })),
+);
+const AdminTables = lazy(() =>
+  import("@/routes/admin/AdminTables").then((m) => ({ default: m.AdminTables })),
+);
+const AdminTablesPrint = lazy(() =>
+  import("@/routes/admin/AdminTablesPrint").then((m) => ({
+    default: m.AdminTablesPrint,
+  })),
+);
+const AdminStaff = lazy(() =>
+  import("@/routes/admin/AdminStaff").then((m) => ({ default: m.AdminStaff })),
+);
+const AdminReports = lazy(() =>
+  import("@/routes/admin/AdminReports").then((m) => ({
+    default: m.AdminReports,
+  })),
+);
+
+const lazyEl = (node: ReactNode) => <LazyRoute>{node}</LazyRoute>;
+
+const routes: RouteObject[] = [
   { path: "/", element: <LandingPage /> },
 
   // Customer (anonymous auto-auth happens inside TableLanding)
@@ -27,99 +70,105 @@ export const router = createBrowserRouter([
   { path: "/t/:tableId/orders", element: <CustomerOrders /> },
 
   // Staff
-  { path: "/staff/login", element: <StaffLogin /> },
+  { path: "/staff/login", element: lazyEl(<StaffLogin />) },
   {
     path: "/staff",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["staff", "admin"]}>
         <Navigate to="/staff/tables" replace />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
   {
     path: "/staff/tables",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["staff", "admin"]}>
         <StaffTables />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
   {
     path: "/staff/tables/:tableId",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["staff", "admin"]}>
         <StaffTableDetail />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
 
   // Kitchen
   {
     path: "/kitchen",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["kitchen", "admin"]}>
         <KitchenBoard />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
 
   // Admin
   {
     path: "/admin",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["admin"]}>
         <Navigate to="/admin/menu" replace />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
   {
     path: "/admin/menu",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["admin"]}>
         <AdminMenu />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
   {
     path: "/admin/categories",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["admin"]}>
         <AdminCategories />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
   {
     path: "/admin/tables",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["admin"]}>
         <AdminTables />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
   {
     path: "/admin/tables/print",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["admin"]}>
         <AdminTablesPrint />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
   {
     path: "/admin/staff",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["admin"]}>
         <AdminStaff />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
   {
     path: "/admin/reports",
-    element: (
+    element: lazyEl(
       <RoleGuard allow={["admin"]}>
         <AdminReports />
-      </RoleGuard>
+      </RoleGuard>,
     ),
   },
 
   { path: "*", element: <NotFoundPage /> },
-]);
+];
+
+// Attach a single error boundary to every route — catches render errors,
+// loader rejections, and lazy-chunk fetch failures.
+export const router = createBrowserRouter(
+  routes.map((r) => ({ ...r, errorElement })),
+);

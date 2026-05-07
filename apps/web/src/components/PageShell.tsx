@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { OfflineBanner } from "@/components/OfflineBanner";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { useAuth, isStaffRole } from "@/features/auth/useAuth";
@@ -28,6 +29,7 @@ export function PageShell({ title, back, className, children }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
+      <OfflineBanner />
       <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
         <div className="container flex items-center justify-between gap-3 py-3">
           <div className="flex items-center gap-2">

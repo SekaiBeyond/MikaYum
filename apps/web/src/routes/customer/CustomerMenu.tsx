@@ -6,6 +6,7 @@ import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ItemSheet } from "@/features/menu/ItemSheet";
 import { useMenu } from "@/lib/hooks/useMenu";
 import { useLocalized } from "@/lib/hooks/useLocale";
@@ -42,7 +43,7 @@ export function CustomerMenu() {
       className="pb-28"
     >
       {loading ? (
-        <p className="text-muted-foreground">{t("customer.menuLoading")}</p>
+        <MenuSkeleton />
       ) : totalItems === 0 ? (
         <p className="text-muted-foreground">{t("customer.menuEmpty")}</p>
       ) : (
@@ -143,5 +144,31 @@ export function CustomerMenu() {
         </div>
       )}
     </PageShell>
+  );
+}
+
+function MenuSkeleton() {
+  return (
+    <div className="space-y-8">
+      {[0, 1].map((s) => (
+        <section key={s} className="space-y-3">
+          <Skeleton className="h-6 w-32" />
+          <div className="grid gap-3 sm:grid-cols-2">
+            {[0, 1, 2, 3].map((c) => (
+              <Card key={c}>
+                <Skeleton className="aspect-[4/3] w-full rounded-b-none" />
+                <CardHeader className="space-y-2">
+                  <Skeleton className="h-5 w-2/3" />
+                  <Skeleton className="h-4 w-full" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-5 w-16" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
   );
 }

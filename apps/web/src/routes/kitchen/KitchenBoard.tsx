@@ -7,6 +7,7 @@ import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useOrdersByStatus } from "@/lib/hooks/usePendingOrders";
 import { useLocalized } from "@/lib/hooks/useLocale";
 import { db, functions } from "@/lib/firebase";
@@ -71,7 +72,7 @@ export function KitchenBoard() {
   return (
     <PageShell title={t("kitchen.title")} className="pb-10">
       {loading ? (
-        <p className="text-muted-foreground">{t("common.loading")}</p>
+        <KitchenSkeleton />
       ) : (
         <div className="grid gap-6 lg:grid-cols-2">
           <Column
@@ -124,6 +125,32 @@ export function KitchenBoard() {
         </div>
       )}
     </PageShell>
+  );
+}
+
+function KitchenSkeleton() {
+  return (
+    <div className="grid gap-6 lg:grid-cols-2">
+      {[0, 1].map((col) => (
+        <section key={col} className="space-y-3">
+          <Skeleton className="h-8 w-32" />
+          <div className="space-y-3">
+            {[0, 1].map((tile) => (
+              <Card key={tile}>
+                <CardContent className="space-y-3 p-4">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-7 w-32" />
+                    <Skeleton className="h-5 w-12" />
+                  </div>
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
   );
 }
 

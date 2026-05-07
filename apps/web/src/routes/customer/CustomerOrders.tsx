@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { PageShell } from "@/components/PageShell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/features/auth/useAuth";
 import { useCustomerOrders } from "@/lib/hooks/useCustomerOrders";
 import { useTable } from "@/lib/hooks/useTable";
@@ -47,7 +48,7 @@ export function CustomerOrders() {
       )}
 
       {loading ? (
-        <p className="text-muted-foreground">{t("common.loading")}</p>
+        <OrdersSkeleton />
       ) : filtered.length === 0 ? (
         <p className="text-muted-foreground">{t("customer.noOrders")}</p>
       ) : (
@@ -58,6 +59,25 @@ export function CustomerOrders() {
         </div>
       )}
     </PageShell>
+  );
+}
+
+function OrdersSkeleton() {
+  return (
+    <div className="space-y-3">
+      {[0, 1, 2].map((i) => (
+        <Card key={i}>
+          <CardContent className="space-y-3 p-4">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-5 w-12" />
+              <Skeleton className="h-5 w-20" />
+            </div>
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 }
 

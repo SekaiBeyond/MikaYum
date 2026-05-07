@@ -21,7 +21,11 @@
     "edit": "编辑",
     "add": "添加",
     "close": "关闭",
-    "language": "语言"
+    "language": "语言",
+    "offline": "网络已断开，恢复连接后将自动同步。",
+    "increase": "增加",
+    "decrease": "减少",
+    "remove": "移除"
   },
   "customer": {
     "welcome": "欢迎光临 {{cafe}}",
@@ -152,7 +156,9 @@
   },
   "errors": {
     "notFound": "页面未找到。",
-    "goHome": "返回首页"
+    "goHome": "返回首页",
+    "routeError": "出错了。",
+    "reload": "重新加载"
   },
   "status": {
     "pending": "等待中",
