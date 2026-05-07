@@ -1,0 +1,26 @@
+{
+  "name": "mikayum",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MikaYum — bilingual maid cafe ordering system",
+  "workspaces": [
+    "apps/*",
+    "functions"
+  ],
+  "scripts": {
+    "dev": "npm --workspace apps/web run dev",
+    "build": "npm --workspace apps/web run build && npm --workspace functions run build",
+    "typecheck": "npm --workspace apps/web run typecheck && npm --workspace functions run typecheck",
+    "lint": "npm --workspace apps/web run lint",
+    "emulators": "firebase emulators:start",
+    "dev:emulators": "concurrently -n web,emu -c blue,green \"npm run dev\" \"npm run emulators\"",
+    "deploy": "npm run build && firebase deploy"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "firebase-tools": "^15.12.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

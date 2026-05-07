@@ -1,0 +1,95 @@
+rules_version = '2';
+
+// MikaYum Firestore security rules.
+// Strategy:
+//   - menuItems / categories / config: public read so anonymous customers can browse.
+//   - tables: public read (limited fields); writes via Cloud Functions / admin only.
+//   - orders: created via the placeOrder callable (admin SDK bypasses these rules);
+//     direct client creates are denied. Reads scoped per role. Status updates via
+//     the updateOrderStatus callable.
+//   - users: admin-only.
+//
+// Tighten further during M5 hardening.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function role() {
+      return request.auth != null ? request.auth.token.role : null;
+    }
+
+    function isStaff() {
+      return role() in ['staff', 'kitchen', 'admin'];
+    }
+
+    function isAdmin() {
+      return role() == 'admin';
+    }
+
+    // -------------------- public-readable reference data --------------------
+    match /menuItems/{itemId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // -------------------- tables --------------------
+    match /tables/{tableId} {
+      allow read: if true;
+      // Direct writes blocked — Cloud Functions update via admin SDK.
+      allow write: if isAdmin();
+    }
+
+    // -------------------- sessions --------------------
+    match /sessions/{sessionId} {
+      allow read: if isStaff()
+                  || (isSignedIn() && request.auth.uid in resource.data.customerUids);
+      allow write: if false; // Cloud Functions only.
+    }
+
+    // -------------------- orders --------------------
+    match /orders/{orderId} {
+      // Customer can only read their own orders.
+      allow get: if isStaff()
+                 || (isSignedIn() && resource.data.placedByUid == request.auth.uid);
+      allow list: if isStaff();
+      // Direct create/update/delete blocked — callable functions handle these.
+      allow write: if false;
+    }
+
+    // -------------------- counters (order numbering) --------------------
+    match /counters/{day} {
+      allow read, write: if false; // Cloud Functions only.
+    }
+
+    // -------------------- users (staff) --------------------
+    match /users/{uid} {
+      allow get: if isAdmin() || (isSignedIn() && request.auth.uid == uid);
+      allow list, write: if isAdmin();
+    }
+
+    // -------------------- reports --------------------
+    match /reports/{day} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // Default deny.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
