@@ -4,6 +4,7 @@ import { RouterProvider } from "react-router-dom";
 import "@/lib/i18n";
 import { router } from "@/routes/router";
 import { AuthProvider } from "@/features/auth/AuthProvider";
+import { Toaster } from "@/components/ui/sonner";
 import "./index.css";
 
 const rootEl = document.getElementById("root");
@@ -13,6 +14,7 @@ createRoot(rootEl).render(
   <StrictMode>
     <AuthProvider>
       <RouterProvider router={router} />
+      <Toaster />
     </AuthProvider>
   </StrictMode>,
 );

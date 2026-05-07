@@ -56,13 +56,24 @@ npx firebase use --add        # pick your project, alias it as "dev"
 ### 3. Run locally against the emulator
 
 ```bash
-npm run dev:emulators
+npm run dev:emulators        # vite + firebase emulators (auth, firestore, functions, storage)
+npm run seed                  # populate sample bilingual menu, 5 open tables (T01–T05)
 ```
 
 - Web app: <http://localhost:5173>
 - Emulator UI: <http://localhost:4000>
+- Customer flow start: <http://localhost:5173/t/T01>
 
-The emulator stores no real data and lets you reset state freely. Set `VITE_USE_EMULATORS=0` in `.env.local` to point at the real dev project instead.
+The emulator stores no real data and lets you reset state freely. Set `VITE_USE_EMULATORS=0` in `apps/web/.env.local` to point at the real dev project instead.
+
+### Smoke test placeOrder
+
+```bash
+# With emulators running and seed loaded
+npx tsx scripts/e2e-placeorder.ts
+```
+
+Signs in anonymously, places a sample order at T01, asserts the subtotal is correct.
 
 ### 4. Deploy
 
@@ -79,4 +90,12 @@ This builds the web app and functions, then runs `firebase deploy` to Hosting + 
 
 ## Status
 
-🚧 In active development. Currently in **M1 — Scaffold & infra**. See plan file for milestones.
+🚧 In active development.
+
+- **M1** ✅ Scaffold & infra (workspace, web app, functions, Firebase config, auth, routing, i18n)
+- **M2** ✅ Menu & customer ordering (data model, customer browse + cart + place order, live status, basic admin menu CRUD)
+- **M3** ⏳ Staff & kitchen (next)
+- **M4** ⏳ Admin & branding
+- **M5** ⏳ Hardening & event prep
+
+See the plan file for milestone scope.

@@ -4,4 +4,4 @@ initializeApp();
 
 export { placeOrder, updateOrderStatus } from "./orders";
 export { openTableSession, markTablePaid } from "./tables";
-export { setStaffRole, seedMenu } from "./admin";
+export { setStaffRole } from "./admin";

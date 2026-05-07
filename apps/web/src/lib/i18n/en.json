@@ -1,0 +1,83 @@
+{
+  "app": {
+    "name": "MikaYum",
+    "tagline": "Maid cafe ordering"
+  },
+  "nav": {
+    "menu": "Menu",
+    "cart": "Cart",
+    "orders": "My orders",
+    "tables": "Tables",
+    "kitchen": "Kitchen",
+    "admin": "Admin"
+  },
+  "common": {
+    "loading": "Loading…",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "language": "Language"
+  },
+  "customer": {
+    "welcome": "Welcome to {{cafe}}",
+    "scanPrompt": "You're seated at {{table}}. Tap below to start ordering.",
+    "browseMenu": "Browse menu",
+    "viewOrders": "View my orders",
+    "tableClosed": "This table isn't open yet — please ask a maid to seat you.",
+    "addToCart": "Add to cart",
+    "placeOrder": "Place order",
+    "cartEmpty": "Your cart is empty.",
+    "noOrders": "No orders yet.",
+    "addOns": "Add-ons",
+    "note": "Note for the kitchen",
+    "notePlaceholder": "e.g. extra cute drawing 🥺",
+    "subtotal": "Subtotal",
+    "remove": "Remove",
+    "soldOut": "Sold out",
+    "orderPlaced": "Order placed!",
+    "orderFailed": "Couldn't place order: {{error}}",
+    "sessionTotal": "Session total",
+    "menuLoading": "Loading menu…",
+    "menuEmpty": "No items available right now."
+  },
+  "staff": {
+    "loginTitle": "Staff sign in",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "tablesTitle": "Tables",
+    "openTable": "Open table",
+    "markPaid": "Mark paid",
+    "markDelivered": "Mark delivered",
+    "orderForGuest": "Order for guest",
+    "noPermission": "You don't have permission to view this page."
+  },
+  "kitchen": {
+    "title": "Kitchen queue",
+    "incoming": "Incoming",
+    "ready": "Ready for pickup",
+    "markReady": "Mark ready",
+    "noOrders": "No pending orders. ✨"
+  },
+  "admin": {
+    "menu": "Menu",
+    "tables": "Tables",
+    "staff": "Staff",
+    "reports": "Reports"
+  },
+  "errors": {
+    "notFound": "Page not found.",
+    "goHome": "Go home"
+  },
+  "status": {
+    "pending": "Pending",
+    "ready": "Ready",
+    "delivered": "Delivered"
+  }
+}

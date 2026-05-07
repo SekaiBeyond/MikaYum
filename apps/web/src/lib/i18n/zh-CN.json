@@ -1,0 +1,83 @@
+{
+  "app": {
+    "name": "MikaYum",
+    "tagline": "女仆咖啡厅点单系统"
+  },
+  "nav": {
+    "menu": "菜单",
+    "cart": "购物车",
+    "orders": "我的订单",
+    "tables": "桌台",
+    "kitchen": "厨房",
+    "admin": "管理"
+  },
+  "common": {
+    "loading": "加载中…",
+    "back": "返回",
+    "save": "保存",
+    "cancel": "取消",
+    "confirm": "确认",
+    "delete": "删除",
+    "edit": "编辑",
+    "add": "添加",
+    "close": "关闭",
+    "language": "语言"
+  },
+  "customer": {
+    "welcome": "欢迎光临 {{cafe}}",
+    "scanPrompt": "您当前位于 {{table}}。点击下方开始点单。",
+    "browseMenu": "浏览菜单",
+    "viewOrders": "查看我的订单",
+    "tableClosed": "该桌台尚未开台，请呼叫女仆为您安排座位。",
+    "addToCart": "加入购物车",
+    "placeOrder": "下单",
+    "cartEmpty": "购物车是空的。",
+    "noOrders": "暂无订单。",
+    "addOns": "加料",
+    "note": "厨房备注",
+    "notePlaceholder": "例如：画一只可爱的小猫 🥺",
+    "subtotal": "小计",
+    "remove": "移除",
+    "soldOut": "售完",
+    "orderPlaced": "下单成功！",
+    "orderFailed": "下单失败：{{error}}",
+    "sessionTotal": "本桌总额",
+    "menuLoading": "加载菜单中…",
+    "menuEmpty": "目前没有可点的菜品。"
+  },
+  "staff": {
+    "loginTitle": "员工登录",
+    "email": "邮箱",
+    "password": "密码",
+    "signIn": "登录",
+    "signOut": "退出",
+    "tablesTitle": "桌台",
+    "openTable": "开台",
+    "markPaid": "已结账",
+    "markDelivered": "已送达",
+    "orderForGuest": "代客点单",
+    "noPermission": "您没有权限访问此页面。"
+  },
+  "kitchen": {
+    "title": "厨房订单",
+    "incoming": "待制作",
+    "ready": "可取餐",
+    "markReady": "完成出品",
+    "noOrders": "暂无待处理订单。✨"
+  },
+  "admin": {
+    "menu": "菜单",
+    "tables": "桌台",
+    "staff": "员工",
+    "reports": "报表"
+  },
+  "errors": {
+    "notFound": "页面未找到。",
+    "goHome": "返回首页"
+  },
+  "status": {
+    "pending": "等待中",
+    "ready": "已完成",
+    "delivered": "已送达"
+  }
+}

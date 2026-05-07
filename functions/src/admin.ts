@@ -29,9 +29,5 @@ export const setStaffRole = onCall(
   },
 );
 
-/** Dev-only: bulk seed menu from a JSON payload. M2 will use this for setup. */
-export const seedMenu = onCall({ region: "us-central1" }, async (req) => {
-  requireRole(req, ["admin"]);
-  // TODO(M2): implement
-  return { ok: true };
-});
+// Dev seeding lives in scripts/seed.ts (Admin SDK, emulator-only) — no
+// callable to avoid exposing a "wipe data" endpoint in production.
