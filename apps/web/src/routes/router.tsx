@@ -10,7 +10,9 @@ import { StaffTables } from "@/routes/staff/StaffTables";
 import { StaffTableDetail } from "@/routes/staff/StaffTableDetail";
 import { KitchenBoard } from "@/routes/kitchen/KitchenBoard";
 import { AdminMenu } from "@/routes/admin/AdminMenu";
+import { AdminCategories } from "@/routes/admin/AdminCategories";
 import { AdminTables } from "@/routes/admin/AdminTables";
+import { AdminTablesPrint } from "@/routes/admin/AdminTablesPrint";
 import { AdminStaff } from "@/routes/admin/AdminStaff";
 import { AdminReports } from "@/routes/admin/AdminReports";
 import { NotFoundPage } from "@/routes/NotFoundPage";
@@ -79,10 +81,26 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: "/admin/categories",
+    element: (
+      <RoleGuard allow={["admin"]}>
+        <AdminCategories />
+      </RoleGuard>
+    ),
+  },
+  {
     path: "/admin/tables",
     element: (
       <RoleGuard allow={["admin"]}>
         <AdminTables />
+      </RoleGuard>
+    ),
+  },
+  {
+    path: "/admin/tables/print",
+    element: (
+      <RoleGuard allow={["admin"]}>
+        <AdminTablesPrint />
       </RoleGuard>
     ),
   },

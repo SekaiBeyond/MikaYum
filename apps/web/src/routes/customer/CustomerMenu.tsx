@@ -78,6 +78,16 @@ export function CustomerMenu() {
                           : "cursor-not-allowed opacity-60"
                       }
                     >
+                      {item.imageUrl && (
+                        <div className="aspect-[4/3] w-full overflow-hidden rounded-t-lg bg-muted">
+                          <img
+                            src={item.imageUrl}
+                            alt=""
+                            loading="lazy"
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      )}
                       <CardHeader>
                         <div className="flex items-start justify-between gap-3">
                           <CardTitle>{tx(item.name)}</CardTitle>

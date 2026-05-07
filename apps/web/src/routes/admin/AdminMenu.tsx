@@ -18,6 +18,7 @@ import { useMenu } from "@/lib/hooks/useMenu";
 import { useCategories } from "@/lib/hooks/useCategories";
 import { useLocalized } from "@/lib/hooks/useLocale";
 import { MenuItemForm } from "@/features/admin/MenuItemForm";
+import { AdminNav } from "@/routes/admin/AdminNav";
 import { db } from "@/lib/firebase";
 import { formatPriceCAD } from "@/lib/utils";
 import type { MenuItem } from "@/lib/types";
@@ -50,13 +51,14 @@ export function AdminMenu() {
 
   return (
     <PageShell title={t("admin.menu")}>
+      <AdminNav />
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          Manage menu items. Categories are managed separately (M4).
+          Manage menu items. Categories live in their own tab.
         </p>
         <Button onClick={() => setAdding(true)} disabled={categories.length === 0}>
           <Plus className="mr-1 h-4 w-4" />
-          Add item
+          {t("admin.addItem")}
         </Button>
       </div>
 
