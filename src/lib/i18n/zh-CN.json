@@ -51,8 +51,7 @@
   },
   "staff": {
     "loginTitle": "员工登录",
-    "email": "邮箱",
-    "password": "密码",
+    "loginSubtitle": "请使用 Google 账号登录。",
     "signIn": "登录",
     "signOut": "退出",
     "tablesTitle": "桌台",

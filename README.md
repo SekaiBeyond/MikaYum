@@ -22,7 +22,7 @@ Payment is settled at a counter — the app tracks unpaid balances per table onl
 apps/web/        # Customer / staff / kitchen / admin SPA
 functions/       # Cloud Functions (placeOrder, status transitions, etc.)
 firestore.rules  # Security rules
-firebase.json    # Hosting + Functions + Emulators config
+firebase.json    # Hosting + Functions config
 ```
 
 ## Getting started
@@ -38,14 +38,14 @@ npm install
 1. Go to <https://console.firebase.google.com/> → **Add project** → name it (e.g. `mikayum-dev`).
 2. Skip Google Analytics (not needed).
 3. **Build → Firestore Database** → Create database → start in production mode.
-4. **Build → Authentication** → Get started → enable **Email/Password** and **Anonymous** sign-in providers.
+4. **Build → Authentication** → Get started → enable **Google** and **Anonymous** sign-in providers.
 5. **Build → Storage** → Get started (default rules; we'll lock these down).
 6. **Project settings (gear) → General → Your apps → Web (`</>`)** → register an app named `web`. Copy the config snippet.
 
 Then:
 
 ```bash
-cp .env.example apps/web/.env.local
+cp .env.example .env.local
 # Fill in the VITE_FIREBASE_* values from the config snippet you just copied.
 
 # Link this repo to the Firebase project
@@ -53,27 +53,14 @@ npx firebase login
 npx firebase use --add        # pick your project, alias it as "dev"
 ```
 
-### 3. Run locally against the emulator
+### 3. Run the dev server
 
 ```bash
-npm run dev:emulators        # vite + firebase emulators (auth, firestore, functions, storage)
-npm run seed                  # populate sample bilingual menu, 5 open tables (T01–T05)
+npm run dev
 ```
 
 - Web app: <http://localhost:5173>
-- Emulator UI: <http://localhost:4000>
 - Customer flow start: <http://localhost:5173/t/T01>
-
-The emulator stores no real data and lets you reset state freely. Set `VITE_USE_EMULATORS=0` in `apps/web/.env.local` to point at the real dev project instead.
-
-### Smoke test placeOrder
-
-```bash
-# With emulators running and seed loaded
-npx tsx scripts/e2e-placeorder.ts
-```
-
-Signs in anonymously, places a sample order at T01, asserts the subtotal is correct.
 
 ### 4. Deploy
 
@@ -86,4 +73,4 @@ This builds the web app and functions, then runs `firebase deploy` to Hosting + 
 ## Roles
 
 - **Customer** — anonymous Firebase auth, auto on first QR scan.
-- **Staff / Kitchen / Admin** — email/password. Roles set via Firebase custom claims by an admin (see `functions/src/admin.ts → setStaffRole`).
+- **Staff / Kitchen / Admin** — Google sign-in. Roles set via Firebase custom claims by an admin (see `functions/src/admin.ts → setStaffRole`).

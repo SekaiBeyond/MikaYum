@@ -138,5 +138,3 @@ function randomPassword(): string {
     return out;
 }
 
-// Dev seeding lives in scripts/seed.ts (Admin SDK, emulator-only) — no
-// callable to avoid exposing a "wipe data" endpoint in production.

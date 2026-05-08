@@ -51,8 +51,7 @@
   },
   "staff": {
     "loginTitle": "Staff sign in",
-    "email": "Email",
-    "password": "Password",
+    "loginSubtitle": "Sign in with your Google account to continue.",
     "signIn": "Sign in",
     "signOut": "Sign out",
     "tablesTitle": "Tables",

@@ -1,19 +1,18 @@
-import { type FormEvent, useState } from "react";
+import { useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useTranslation } from "react-i18next";
 import { auth } from "@/lib/firebase";
 import { isStaffRole, useAuth } from "@/features/auth/useAuth";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
+const provider = new GoogleAuthProvider();
 
 export function StaffLogin() {
     const { t } = useTranslation();
     const { role, loading } = useAuth();
     const location = useLocation();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
 
@@ -23,12 +22,11 @@ export function StaffLogin() {
         return <Navigate to={from ?? dest} replace/>;
     }
 
-    async function onSubmit(e: FormEvent) {
-        e.preventDefault();
+    async function onSignIn() {
         setError(null);
         setSubmitting(true);
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await signInWithPopup(auth, provider);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Sign-in failed");
         } finally {
@@ -38,36 +36,16 @@ export function StaffLogin() {
 
     return (
         <PageShell>
-            <form
-                onSubmit={onSubmit}
-                className="mx-auto flex max-w-sm flex-col gap-4 py-10"
-            >
+            <div className="mx-auto flex max-w-sm flex-col gap-4 py-10">
                 <h1 className="font-display text-2xl">{t("staff.loginTitle")}</h1>
-                <label className="flex flex-col gap-1 text-sm">
-                    {t("staff.email")}
-                    <Input
-                        type="email"
-                        autoComplete="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </label>
-                <label className="flex flex-col gap-1 text-sm">
-                    {t("staff.password")}
-                    <Input
-                        type="password"
-                        autoComplete="current-password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </label>
+                <p className="text-sm text-muted-foreground">
+                    {t("staff.loginSubtitle")}
+                </p>
                 {error && <p className="text-sm text-destructive">{error}</p>}
-                <Button type="submit" disabled={submitting}>
+                <Button type="button" onClick={onSignIn} disabled={submitting}>
                     {submitting ? t("common.loading") : t("staff.signIn")}
                 </Button>
-            </form>
+            </div>
         </PageShell>
     );
 }
