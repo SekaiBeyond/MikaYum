@@ -1,17 +1,17 @@
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { getAuth } from "firebase-admin/auth";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
-import { requireRole } from "./lib/auth";
-import type { StaffRole } from "./types";
+import { requireAuthed, requireRole } from "./lib/auth";
+import type { Role, StaffRole } from "./types";
 
 const REGION = "us-central1";
-const VALID_ROLES: StaffRole[] = ["staff", "kitchen", "admin"];
+const VALID_ROLES: Role[] = ["customer", "staff", "kitchen", "admin"];
 
 export const setStaffRole = onCall(
     { region: REGION },
     async (req) => {
         requireRole(req, ["admin"]);
-        const { uid, role } = (req.data ?? {}) as { uid?: string; role?: StaffRole };
+        const { uid, role } = (req.data ?? {}) as { uid?: string; role?: Role };
         if (!uid || !role || !VALID_ROLES.includes(role)) {
             throw new HttpsError("invalid-argument", "uid and a valid role are required.");
         }
@@ -29,6 +29,41 @@ export const setStaffRole = onCall(
         return { ok: true };
     },
 );
+
+/**
+ * Idempotently ensures the calling user has a `users/{uid}` row. New non-anonymous
+ * sign-ins call this once so admins can see them and promote their role. If a row
+ * already exists with a role, it's left alone — never demotes an admin/staff.
+ */
+export const claimCustomerProfile = onCall({ region: REGION }, async (req) => {
+    const uid = requireAuthed(req);
+    if (req.auth?.token.firebase?.sign_in_provider === "anonymous") {
+        throw new HttpsError("failed-precondition", "Anonymous users cannot claim a profile.");
+    }
+
+    const ref = getFirestore().collection("users").doc(uid);
+    const snap = await ref.get();
+    const existingRole = snap.exists ? (snap.data()?.role as Role | undefined) : undefined;
+    if (existingRole) {
+        return { ok: true, role: existingRole, created: false };
+    }
+
+    const email = (req.auth?.token.email as string | undefined) ?? null;
+    const displayName = (req.auth?.token.name as string | undefined) ?? null;
+    await ref.set(
+        {
+            uid,
+            role: "customer" as Role,
+            active: true,
+            email,
+            displayName,
+            createdAt: FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+    );
+    return { ok: true, role: "customer", created: true };
+});
 
 /**
  * Creates an Auth user (or reuses an existing one) and assigns a role in one

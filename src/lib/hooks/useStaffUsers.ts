@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { StaffRole } from "@/lib/types";
+import type { Role } from "@/lib/types";
 
 export interface StaffUser {
     uid: string;
-    role: StaffRole;
+    role: Role;
     active: boolean;
     email?: string;
     displayName?: string;

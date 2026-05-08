@@ -13,7 +13,7 @@ import { Sheet, SheetBody, SheetContent, SheetFooter, SheetHeader, SheetTitle, }
 import { type StaffUser, useStaffUsers } from "@/lib/hooks/useStaffUsers";
 import { useAuth } from "@/features/auth/useAuth";
 import { functions } from "@/lib/firebase";
-import type { StaffRole } from "@/lib/types";
+import type { Role, StaffRole } from "@/lib/types";
 import { AdminNav } from "@/routes/admin/AdminNav";
 
 const inviteStaffFn = httpsCallable<
@@ -22,7 +22,7 @@ const inviteStaffFn = httpsCallable<
 >(functions, "inviteStaff");
 
 const setStaffRoleFn = httpsCallable<
-    { uid: string; role: StaffRole },
+    { uid: string; role: Role },
     { ok: boolean }
 >(functions, "setStaffRole");
 
@@ -31,7 +31,8 @@ const setStaffActiveFn = httpsCallable<
     { ok: boolean }
 >(functions, "setStaffActive");
 
-const ROLES: StaffRole[] = ["staff", "kitchen", "admin"];
+const ROLES: Role[] = ["customer", "staff", "kitchen", "admin"];
+const INVITE_ROLES: StaffRole[] = ["staff", "kitchen", "admin"];
 
 export function AdminStaff() {
     const { t } = useTranslation();
@@ -56,7 +57,7 @@ export function AdminStaff() {
         setInviting(false);
     }
 
-    async function changeRole(staffUser: StaffUser, role: StaffRole) {
+    async function changeRole(staffUser: StaffUser, role: Role) {
         if (staffUser.role === role) return;
         try {
             await setStaffRoleFn({ uid: staffUser.uid, role });
@@ -93,7 +94,9 @@ export function AdminStaff() {
             {loading ? (
                 <p className="text-muted-foreground">{t("common.loading")}</p>
             ) : users.length === 0 ? (
-                <p className="text-muted-foreground">No staff yet — invite the first.</p>
+                <p className="text-muted-foreground">
+                    No accounts yet. Customers appear here after they sign in; promote them with the role dropdown.
+                </p>
             ) : (
                 <div className="space-y-2">
                     {users.map((u) => (
@@ -115,7 +118,7 @@ export function AdminStaff() {
                                     <select
                                         value={u.role}
                                         onChange={(e) =>
-                                            changeRole(u, e.target.value as StaffRole)
+                                            changeRole(u, e.target.value as Role)
                                         }
                                         className="h-9 rounded-md border border-input bg-background px-2 text-sm"
                                     >
@@ -214,7 +217,7 @@ function InviteForm({ onSubmit, onCancel }: InviteProps) {
                     onChange={(e) => setRole(e.target.value as StaffRole)}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 >
-                    {ROLES.map((r) => (
+                    {INVITE_ROLES.map((r) => (
                         <option key={r} value={r}>
                             {r}
                         </option>

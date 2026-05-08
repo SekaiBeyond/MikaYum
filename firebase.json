@@ -10,9 +10,9 @@
     {
       "source": "functions",
       "codebase": "default",
-      "runtime": "nodejs20",
+      "runtime": "nodejs24",
       "predeploy": [
-        "npm --workspace functions run build"
+        "npx --prefix functions tsc"
       ],
       "ignore": [
         "node_modules",
@@ -22,7 +22,7 @@
     }
   ],
   "hosting": {
-    "public": "apps/web/dist",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -35,7 +35,7 @@
       }
     ],
     "predeploy": [
-      "npm --workspace apps/web run build"
+      "npx tsc -b && npx vite build"
     ]
   }
 }

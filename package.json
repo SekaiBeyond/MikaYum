@@ -5,9 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run build:frontend && npm run build:functions",
+    "build:frontend": "tsc -b && vite build",
+    "build:functions": "cd functions && npm run build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "firebase deploy",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:rules": "firebase deploy --only firestore,storage"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
